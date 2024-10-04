@@ -1,3 +1,6 @@
+
+var historyList = []
+
 function search(){
     var username = document.getElementById("inputUserName").value
 
@@ -5,6 +8,8 @@ function search(){
 
     $.getJSON(url, (user) =>{
         setUserData(user)
+        addUserToHistory(user)
+        refreshHistory()
         showError()
     }).fail( () => {
         setUserData({})
@@ -12,6 +17,16 @@ function search(){
 
     })
 
+}
+
+function refreshHistory(){
+    document.getElementById("history").innerHTML = ""
+    for(let i of historyList){
+        document.getElementById("history").innerHTML +=`
+        <div class="col"> 
+            <img id="avatar_url" src="${i.avatar_url}" width="110" height="110" class="shadow rounded" />
+        </div>`
+    }
 }
 
 function setUserData(user){
@@ -30,4 +45,14 @@ function showError(msg){
     `<div class="alert alert-danger" role="alert">${msg}</div>`
     :
     ""
+}
+
+function addUserToHistory(user){
+    for(let i in historyList){
+        if(historyList[i].login == user.login || i == 4){
+            delete historyList[i]
+            break
+        }
+    }
+    historyList.unshift(user)
 }
